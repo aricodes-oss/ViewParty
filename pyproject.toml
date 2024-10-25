@@ -7,7 +7,17 @@ readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.12"
+python-dotenv = "^1.0.1"
+twitchio = "^2.10.0"
+yt-dlp = "^2024.10.22"
 
+
+[tool.poetry.group.dev.dependencies]
+bpython = "^0.24"
+ruff = "^0.7.1"
+
+[tool.poetry.scripts]
+viewparty = 'viewparty.main:main'
 
 [build-system]
 requires = ["poetry-core"]

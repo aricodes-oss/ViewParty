@@ -1,0 +1,43 @@
+name: publish
+on:
+  push:
+    branches:
+      - main
+      - 'releases/**'
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Set up QEMU
+        uses: docker/setup-qemu-action@master
+        with:
+          platforms: all
+      - name: Set up Docker Buildx
+        id: buildx
+        uses: docker/setup-buildx-action@master
+
+      - name: Log in to registry
+        # This is where you will update the personal access token to GITHUB_TOKEN
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u $ --password-stdin
+
+      # The fact that I can't just ${{ var|lowercase }} astounds me
+      - name: Change case of image identifier
+        id: case
+        uses: ASzc/change-string-case-action@v6
+        with:
+          string: ${{ github.repository_owner }}/${{ github.event.repository.name }}
+
+      - name: Build
+        uses: docker/build-push-action@v2
+        with:
+          context: .
+          file: ./Dockerfile
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ghcr.io/${{ steps.case.outputs.lowercase }}:latest
