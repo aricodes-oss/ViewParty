@@ -58,7 +58,7 @@ async def _main(args):
                     "-b:v",
                     "6M",  # Sets the video bitrate (max twitch supports)
                     "-b:a",
-                    "192k",  # AssertionErrorets audio bitrate (max twitch supports)
+                    "48k",  # AssertionErrorets audio bitrate (max twitch supports)
                     f"{args.rtmp_server}/{STREAM_KEY}",  # Actual RTMP target
                 ]
             )
