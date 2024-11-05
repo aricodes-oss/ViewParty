@@ -3,6 +3,8 @@ import argparse
 import os
 import random
 import subprocess
+import datetime
+from time import sleep
 
 from twitchio import Client
 from yt_dlp import YoutubeDL
@@ -39,7 +41,8 @@ async def _main(args):
         videos = list(
             filter(
                 lambda vid: "speedrun" in vid.title.lower()
-                and vid.url not in recently_watched,
+                and vid.url not in recently_watched
+                and vid.published_at > datetime.datetime(2020, 1, 1).astimezone(),
                 await client.fetch_videos(user_id=user_id, type="highlight"),
             )
         )
@@ -63,6 +66,8 @@ async def _main(args):
                 ]
             )
             stream.wait()
+            # Give the RTMP feed time to go down on Twitch's side
+            sleep(5)
 
 
 def main():
