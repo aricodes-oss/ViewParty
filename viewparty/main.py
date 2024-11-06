@@ -53,8 +53,8 @@ async def _main(args):
                 "-re",  # Playback in real time (useful for livestreaming, prevents skips)
                 "-i",
                 ydl.extract_info(video.url)["url"],  # Get the CDN URL for the playlist
-                "-vcodec",
-                "libx264",  # Copy the audio and video unmodified
+                "-codec",
+                "copy",  # Copy the audio and video unmodified
                 "-f",
                 "flv",  # Output to FLV (required for RTMP)
                 "-b:v",
