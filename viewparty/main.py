@@ -33,41 +33,41 @@ async def _main(args):
     user_id = (await client.fetch_users(names=[args.username]))[0].id
     recently_watched = []
 
-    while True:
-        # Keep recently_watched under memory_length
-        if len(recently_watched) >= args.memory_length:
-            recently_watched.pop(0)
+    # Keep recently_watched under memory_length
+    if len(recently_watched) >= args.memory_length:
+        recently_watched.pop(0)
 
-        videos = list(
-            filter(
-                lambda vid: "speedrun" in vid.title.lower()
-                and vid.url not in recently_watched
-                and vid.published_at > datetime.datetime(2020, 1, 1).astimezone(),
-                await client.fetch_videos(user_id=user_id, type="highlight"),
-            )
+    videos = list(
+        filter(
+            lambda vid: "speedrun" in vid.title.lower()
+            and vid.url not in recently_watched
+            and vid.published_at > datetime.datetime(2020, 1, 1).astimezone(),
+            await client.fetch_videos(user_id=user_id, type="highlight"),
         )
-        with YoutubeDL(YDL_ARGS) as ydl:
-            video = random.choice(videos)
-            stream = subprocess.Popen(
-                [
-                    "ffmpeg",
-                    "-re",  # Playback in real time (useful for livestreaming, prevents skips)
-                    "-i",
-                    ydl.extract_info(video.url)["url"],  # Get the CDN URL for the playlist
-                    "-codec",
-                    "copy",  # Copy the audio and video unmodified
-                    "-f",
-                    "flv",  # Output to FLV (required for RTMP)
-                    "-b:v",
-                    "6M",  # Sets the video bitrate (max twitch supports)
-                    "-b:a",
-                    "48k",  # AssertionErrorets audio bitrate (max twitch supports)
-                    f"{args.rtmp_server}/{STREAM_KEY}",  # Actual RTMP target
-                ]
-            )
-            stream.wait()
-            # Give the RTMP feed time to go down on Twitch's side
-            sleep(5)
+    )
+    with YoutubeDL(YDL_ARGS) as ydl:
+        video = random.choice(videos)
+        stream = subprocess.Popen(
+            [
+                "ffmpeg",
+                "-re",  # Playback in real time (useful for livestreaming, prevents skips)
+                "-i",
+                ydl.extract_info(video.url)["url"],  # Get the CDN URL for the playlist
+                "-vcodec",
+                "libx264",  # Copy the audio and video unmodified
+                "-f",
+                "flv",  # Output to FLV (required for RTMP)
+                "-b:v",
+                "6M",  # Sets the video bitrate (max twitch supports)
+                "-b:a",
+                "48k",  # AssertionErrorets audio bitrate (max twitch supports)
+                f"{args.rtmp_server}/{STREAM_KEY}",  # Actual RTMP target
+            ]
+        )
+        stream.wait()
+
+        # Give the RTMP feed time to go down on Twitch's side
+        sleep(5)
 
 
 def main():
