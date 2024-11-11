@@ -53,6 +53,8 @@ async def _main(args):
     stream = subprocess.Popen(
         [
             "ffmpeg",
+            "-flags",
+            "+global_header",
             "-re",  # Playback in real time (useful for livestreaming, prevents skips)
             "-f",
             "concat",
