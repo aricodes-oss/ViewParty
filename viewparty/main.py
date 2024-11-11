@@ -54,6 +54,8 @@ async def _main(args):
         [
             "ffmpeg",
             "-re",  # Playback in real time (useful for livestreaming, prevents skips)
+            "-f",
+            "concat",
             "-safe",
             "0",  # Accept HTTP streams
             "-protocol_whitelist",
