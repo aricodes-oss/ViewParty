@@ -41,7 +41,7 @@ async def _main(args):
         )
     )
     # Take a sampling of these videos and create a playlist file out of them
-    videos = random.choices(videos, k=10)
+    videos = random.choices(videos, k=2)
     with YoutubeDL(YDL_ARGS) as ydl:
         # Map all the videos to their URLs
         videos = [ydl.extract_info(video.url)["url"] for video in videos]
@@ -67,6 +67,8 @@ async def _main(args):
             "file,http,https,tcp,tls",  # Expand protocol whitelist to accept web streams
             "-i",
             playlist_file.name,
+            "-fps_mode",
+            "drop",
             "-codec",
             "copy",  # Copy the audio and video unmodified
             "-f",
