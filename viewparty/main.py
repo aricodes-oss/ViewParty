@@ -56,6 +56,8 @@ async def _main(args):
             "-fflags",
             "+igndts",
             "-hide_banner",
+            "-use_wallclock_as_timestamps",
+            "1",
             "-flags",
             "+global_header",
             "-re",  # Playback in real time (useful for livestreaming, prevents skips)
